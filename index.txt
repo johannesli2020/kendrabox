@@ -65,6 +65,7 @@
 
         .badge-skincare { background-color: #e2e8f0; color: #475569; }
         .badge-collectibles { background-color: #fee2e2; color: #b91c1c; }
+        .badge-starwars { background-color: #0f172a; color: #f59e0b; border: 1px solid #f59e0b; }
         
         /* Animación de carga */
         .loader {
@@ -93,6 +94,8 @@
                 <a href="#" class="hover:text-amber-500 transition">Inicio</a>
                 <a href="#skincare" class="hover:text-amber-500 transition">Skin Care</a>
                 <a href="#coleccionables" class="hover:text-amber-500 transition">Coleccionables</a>
+                <!-- Agregado Star Wars al menú -->
+                <a href="#starwars" class="hover:text-amber-500 transition">Star Wars</a>
                 <a href="#contacto" class="hover:text-amber-500 transition">Contacto</a>
             </div>
 
@@ -115,6 +118,7 @@
                 <a href="#" class="block text-slate-600 hover:text-amber-500 font-bold text-lg transition" onclick="toggleMobileMenu()">Inicio</a>
                 <a href="#skincare" class="block text-slate-600 hover:text-amber-500 font-bold text-lg transition" onclick="toggleMobileMenu()">Skin Care</a>
                 <a href="#coleccionables" class="block text-slate-600 hover:text-amber-500 font-bold text-lg transition" onclick="toggleMobileMenu()">Coleccionables</a>
+                <a href="#starwars" class="block text-slate-600 hover:text-amber-500 font-bold text-lg transition" onclick="toggleMobileMenu()">Star Wars</a>
                 <a href="#contacto" class="block text-slate-600 hover:text-amber-500 font-bold text-lg transition" onclick="toggleMobileMenu()">Contacto</a>
             </div>
         </div>
@@ -200,6 +204,23 @@
         </div>
     </section>
 
+    <!-- NUEVA SECCIÓN STAR WARS DINÁMICA (DISEÑO ESPACIAL OSCURO SLEEK) -->
+    <section id="starwars" class="bg-slate-950 py-24 px-6 overflow-hidden border-t border-slate-900">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                <div>
+                    <h2 class="text-4xl lg:text-5xl font-bold text-white tracking-tight">Colección <span class="text-amber-400">Star Wars</span></h2>
+                    <p class="text-slate-400 mt-2 text-lg">Que la Fuerza te acompañe: Figuras de colección importadas de una galaxia muy lejana.</p>
+                </div>
+                <span id="starwars-count" class="text-sm font-bold text-slate-500 bg-slate-900 px-4 py-2 rounded-xl border border-amber-400/20">Cargando...</span>
+            </div>
+            
+            <div id="starwars-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="col-span-full text-center py-10"><div class="loader"></div><p class="mt-4 text-slate-400 font-bold">Cargando galaxia lejana...</p></div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer / Contact -->
     <footer id="contacto" class="bg-slate-900 text-white pt-24 pb-12 px-6">
         <div class="max-w-7xl mx-auto grid lg:grid-cols-4 gap-16 border-b border-slate-800 pb-20 mb-12">
@@ -223,45 +244,56 @@
         </div>
     </footer>
 
-    <div id="toast"><i class="fa-solid fa-circle-check text-green-400 text-2xl mb-2 block"></i><span id="toast-msg"></span></div>
+    <div id="toast"><i class="fa-solid fa-circle-check text-green-400 text-2xl mb-2 block" id="toast-icon"></i><span id="toast-msg"></span></div>
 
     <!-- SCRIPTS MÁGICOS (Conexión a Google Sheets) -->
     <script>
-        // =====================================================================
-        // PEGA AQUÍ TU ENLACE OBTENIDO CON "PUBLICAR EN LA WEB"
-        // Asegúrate de que termine en algo parecido a /pub?output=csv
-        // =====================================================================
+        // AQUÍ ESTÁ EL ENLACE DE TU GOOGLE SHEET VINCULADO
         const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVI8kInx46yuvr403TyH7JTWINB6653UD0tMkBobkitUX3gSXKAgkCWpa94PSMh9V8x6kpSUBDncVq/pub?output=csv"; 
 
         const productosPorDefecto = [
-            { Categoria: "Skin Care", Nombre: "Catálogo de Respaldo", Marca: "Ejemplo", Imagen1: "", Detalle1: "Parece que el link no es público.", Detalle2: "Revisa las instrucciones.", Precio: "0.00" }
+            { Categoria: "Skin Care", Nombre: "Ácido Glicólico 7% (Ejemplo)", Marca: "The Ordinary", Imagen1: "glicolico1.jpg", Imagen2: "", Imagen3: "", Detalle1: "Exfolia suavemente.", Detalle2: "Uso nocturno.", Precio: "105.00" },
+            { Categoria: "Star Wars", Nombre: "Darth Vader Premium (Ejemplo)", Marca: "Hasbro The Black Series", Imagen1: "vader1.jpg", Imagen2: "", Imagen3: "", Detalle1: "Figura premium articulada de 15cm.", Detalle2: "Accesorios galácticos coleccionables.", Precio: "145.00" }
         ];
 
         function mostrarProductos(productos) {
             const skinCareGrid = document.getElementById('skincare-grid');
             const coleccionablesGrid = document.getElementById('coleccionables-grid');
+            const starWarsGrid = document.getElementById('starwars-grid');
             
             skinCareGrid.innerHTML = '';
             coleccionablesGrid.innerHTML = '';
+            starWarsGrid.innerHTML = '';
             
             let skinCareCount = 0;
             let coleccionablesCount = 0;
+            let starWarsCount = 0;
 
             productos.forEach(p => {
-                if(!p.Nombre || p.Nombre.trim() === "") return;
+                if(!p.Nombre || p.Nombre.trim() === "") return; // Ignora filas vacías
 
-                const esSkinCare = p.Categoria.trim() === 'Skin Care';
+                const esSkinCare = p.Categoria && p.Categoria.trim() === 'Skin Care';
+                const esStarWars = p.Categoria && p.Categoria.trim() === 'Star Wars';
                 
-                let miniaturasHtml = `
-                    <img class="w-10 h-10 object-cover rounded-lg border border-slate-200 cursor-pointer hover:border-blue-500" src="${p.Imagen1}" onclick="this.closest('.product-card').querySelector('.main-img').src=this.src" onerror="this.style.display='none'">
-                `;
+                let miniaturasHtml = p.Imagen1 ? `<img class="w-10 h-10 object-cover rounded-lg border border-slate-200 cursor-pointer hover:border-blue-500" src="${p.Imagen1}" onclick="this.closest('.product-card').querySelector('.main-img').src=this.src" onerror="this.style.display='none'">` : '';
                 if(p.Imagen2) miniaturasHtml += `<img class="w-10 h-10 object-cover rounded-lg border border-slate-200 cursor-pointer hover:border-blue-500" src="${p.Imagen2}" onclick="this.closest('.product-card').querySelector('.main-img').src=this.src" onerror="this.style.display='none'">`;
                 if(p.Imagen3) miniaturasHtml += `<img class="w-10 h-10 object-cover rounded-lg border border-slate-200 cursor-pointer hover:border-blue-500" src="${p.Imagen3}" onclick="this.closest('.product-card').querySelector('.main-img').src=this.src" onerror="this.style.display='none'">`;
 
+                // Determinar el estilo de la etiqueta (Badge)
+                let badgeClass = 'badge-collectibles';
+                let badgeIcon = 'fa-star';
+                if (esSkinCare) {
+                    badgeClass = 'badge-skincare';
+                    badgeIcon = 'fa-droplet';
+                } else if (esStarWars) {
+                    badgeClass = 'badge-starwars';
+                    badgeIcon = 'fa-jedi';
+                }
+
                 const tarjetaHTML = `
                     <div class="product-card bg-white p-6 rounded-[32px] relative flex flex-col h-full">
-                        <span class="absolute top-4 right-4 ${esSkinCare ? 'badge-skincare' : 'badge-collectibles'} text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">
-                            <i class="fa-solid ${esSkinCare ? 'fa-droplet' : 'fa-star'} mr-1"></i> ${p.Categoria}
+                        <span class="absolute top-4 right-4 ${badgeClass} text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">
+                            <i class="fa-solid ${badgeIcon} mr-1"></i> ${p.Categoria || 'Producto'}
                         </span>
                         
                         <div class="aspect-square rounded-2xl overflow-hidden mb-3 bg-slate-50">
@@ -272,15 +304,15 @@
                         </div>
 
                         <h3 class="font-bold text-xl mb-1 text-slate-800">${p.Nombre}</h3>
-                        <p class="text-slate-500 text-sm font-semibold mb-3 border-b pb-2">${p.Marca}</p>
+                        <p class="text-slate-500 text-sm font-semibold mb-3 border-b pb-2">${p.Marca || ''}</p>
                         
                         <div class="text-sm text-slate-600 mb-6 space-y-1.5 flex-grow">
-                            <p><strong class="text-slate-800">${esSkinCare ? 'Beneficio:' : 'Detalle:'}</strong> ${p.Detalle1}</p>
-                            <p><strong class="text-slate-800">${esSkinCare ? 'Uso:' : 'Funciones:'}</strong> ${p.Detalle2}</p>
+                            <p><strong class="text-slate-800">${esSkinCare ? 'Beneficio:' : 'Detalle:'}</strong> ${p.Detalle1 || ''}</p>
+                            <p><strong class="text-slate-800">${esSkinCare ? 'Uso:' : 'Funciones:'}</strong> ${p.Detalle2 || ''}</p>
                         </div>
 
                         <div class="flex justify-between items-center mt-auto pt-4 border-t border-slate-100">
-                            <p class="${esSkinCare ? 'text-amber-600' : 'text-red-500'} font-black text-2xl">S/ ${p.Precio}</p>
+                            <p class="${esSkinCare ? 'text-amber-600' : 'text-red-500'} font-black text-2xl">S/ ${p.Precio || '0.00'}</p>
                             <button onclick="addToCart('${p.Nombre}')" class="bg-slate-900 text-amber-400 w-12 h-12 rounded-2xl flex items-center justify-center hover:bg-amber-500 hover:text-slate-900 transition"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
@@ -289,6 +321,9 @@
                 if(esSkinCare) {
                     skinCareGrid.innerHTML += tarjetaHTML;
                     skinCareCount++;
+                } else if(esStarWars) {
+                    starWarsGrid.innerHTML += tarjetaHTML;
+                    starWarsCount++;
                 } else {
                     coleccionablesGrid.innerHTML += tarjetaHTML;
                     coleccionablesCount++;
@@ -297,28 +332,38 @@
 
             document.getElementById('skincare-count').innerText = skinCareCount + ' Productos';
             document.getElementById('coleccionables-count').innerText = coleccionablesCount + ' Productos';
+            document.getElementById('starwars-count').innerText = starWarsCount + ' Productos';
             
-            if(skinCareCount === 0) skinCareGrid.innerHTML = '<p class="text-slate-500 col-span-full">Aún no hay productos aquí.</p>';
-            if(coleccionablesCount === 0) coleccionablesGrid.innerHTML = '<p class="text-slate-400 col-span-full">Aún no hay productos aquí.</p>';
+            if(skinCareCount === 0) skinCareGrid.innerHTML = '<p class="text-slate-500 col-span-full">Aún no hay productos de Skin Care agregados.</p>';
+            if(coleccionablesCount === 0) coleccionablesGrid.innerHTML = '<p class="text-slate-400 col-span-full">Aún no hay coleccionables agregados.</p>';
+            if(starWarsCount === 0) starWarsGrid.innerHTML = '<p class="text-slate-400 col-span-full">Aún no hay coleccionables de Star Wars agregados.</p>';
         }
 
-        if(GOOGLE_SHEET_URL.trim() !== "" && GOOGLE_SHEET_URL !== "PEGAR_AQUI_EL_NUEVO_ENLACE") {
-            Papa.parse(GOOGLE_SHEET_URL, {
-                download: true,
-                header: true,
-                complete: function(results) {
-                    mostrarProductos(results.data);
-                },
-                error: function(err) {
-                    console.error(err);
-                    showToast("Error al cargar Excel, mostrando catálogo guardado.");
+        // LECTURA DEL EXCEL
+        Papa.parse(GOOGLE_SHEET_URL, {
+            download: true,
+            header: true,
+            complete: function(results) {
+                if(results.data.length === 0 || !results.data[0].hasOwnProperty('Nombre')) {
+                    showToast("Atención: El Excel está vacío o le faltan los títulos.", true);
                     mostrarProductos(productosPorDefecto);
+                } else {
+                    mostrarProductos(results.data);
+                    showToast("¡Catálogo sincronizado con éxito!", false);
                 }
-            });
-        } else {
-            mostrarProductos(productosPorDefecto);
-        }
+            },
+            error: function(err) {
+                console.error("Error completo:", err);
+                if(window.location.protocol === 'file:') {
+                    showToast("Error: Chrome bloquea tu Excel por abrirlo desde tu PC. Sube tu web a internet.", true);
+                } else {
+                    showToast("Error de conexión con Google Sheets.", true);
+                }
+                mostrarProductos(productosPorDefecto);
+            }
+        });
 
+        // FUNCIONES DE INTERFAZ
         let cartCount = 0;
         function addToCart(productName) {
             cartCount++;
@@ -326,20 +371,31 @@
             counterElement.innerText = cartCount;
             counterElement.classList.add('scale-150');
             setTimeout(() => { counterElement.classList.remove('scale-150'); }, 200);
-            showToast(`¡${productName} añadido a tu caja!`);
+            showToast(`¡${productName} añadido a tu caja!`, false);
         }
-        function showToast(message) {
+        function showToast(message, isError = false) {
             const toast = document.getElementById("toast");
             const toastMsg = document.getElementById("toast-msg");
+            const toastIcon = document.getElementById("toast-icon");
+            
             toastMsg.innerText = message;
+            
+            if(isError) {
+                toast.style.backgroundColor = "#ef4444"; 
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-white text-2xl mb-2 block";
+            } else {
+                toast.style.backgroundColor = "#0f172a"; 
+                toastIcon.className = "fa-solid fa-circle-check text-green-400 text-2xl mb-2 block";
+            }
+
             toast.className = "show";
-            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 5000); 
         }
         function openCart() {
             if(cartCount > 0) {
                 window.open(`https://api.whatsapp.com/send?phone=51918152131&text=Hola%20KendraBox,%20tengo%20${cartCount}%20productos%20interesados%20en%20mi%20bolsa%20de%20compras.`);
             } else {
-                showToast("Tu caja de compras está vacía.");
+                showToast("Tu caja de compras está vacía.", true);
             }
         }
         function toggleMobileMenu() {
@@ -354,10 +410,10 @@
         function performSearch() {
             const input = document.getElementById("search-input").value;
             if(input.trim() !== "") {
-                showToast(`Buscando: "${input}"...`);
+                showToast(`Buscando: "${input}"...`, false);
                 setTimeout(() => { toggleSearch(); document.getElementById("search-input").value = ""; }, 1000);
             } else {
-                showToast("Por favor, escribe lo que estás buscando.");
+                showToast("Por favor, escribe lo que estás buscando.", true);
             }
         }
     </script>
